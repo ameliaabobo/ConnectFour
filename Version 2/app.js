@@ -40,7 +40,51 @@ function changeColor(e){
             row.push(tableRow[i].children[column]);
             if(currentPlayer == 1){
                 row[0].style.backgroundColor = player1Color;
+
+                if(horizontalCheck()){
+                    return (alert('winner!'));
+                }
+
+                playerTurn.textContent = `${player2}'s turn!`;
+                return currentPlayer = 2;
+            }
+            else{
+                row[0].style.backgroundColor = player2Color;
+                playerTurn.textContent = `${player1}'s turn!`;
+                return currentPlayer = 1;
             }
         }
+        else{ //full board
+
+        }
     }
+}
+
+function colorMatchCheck(one, two, three, four){
+    return (one == two && one == three && one == four && one != 'white')
+}
+
+function horizontalCheck(){
+    for(let row=0; row < tableRow.length; row++){
+        for(let col=0; col < 4; col++){
+            if(colorMatchCheck(tableRow[row].children[col].style.backgroundColor,
+                tableRow[row].children[col+1].style.backgroundColor, 
+                tableRow[row].children[col+2].style.backgroundColor,
+                tableRow[row].children[col+3].style.backgroundColor)){
+                    return true;
+                }
+        }
+    }
+}
+
+function verticalCheck(){
+
+}
+
+function diagonalCheck1(){
+
+}
+
+function diagonalCheck2(){
+
 }
