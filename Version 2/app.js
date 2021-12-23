@@ -2,7 +2,7 @@
 
 var tableRow = document.getElementsByTagName('tr');
 var tableCell = document.getElementsByTagName('td');
-var tableSlot = document.querySelector('.slot');
+var tableSlot = document.querySelectorAll('.slot');
 const playerTurn = document.querySelector('.player-turn');
 const reset = document.querySelector('.reset');
 
@@ -41,21 +41,34 @@ function changeColor(e){
             if(currentPlayer == 1){
                 row[0].style.backgroundColor = player1Color;
 
-                if(horizontalCheck()){
-                    return (alert('winner!'));
+                if(horizontalCheck() || verticalCheck() || diagonalCheck1() || diagonalCheck2()){
+                    playerTurn.textContent = `${player1} wins!`;
+                    playerTurn.style.color = player1Color;
+                    return (alert('Player 1 wins!'));
                 }
-
-                playerTurn.textContent = `${player2}'s turn!`;
-                return currentPlayer = 2;
+                else if(drawCheck()){
+                    playerTurn.textContent = 'Game is a draw.';
+                }
+                else{
+                    playerTurn.textContent = `${player2}'s turn!`;
+                    return currentPlayer = 2;
+                }
             }
             else{
                 row[0].style.backgroundColor = player2Color;
-                playerTurn.textContent = `${player1}'s turn!`;
-                return currentPlayer = 1;
+                if(horizontalCheck() || verticalCheck() || diagonalCheck1() || diagonalCheck2()){
+                    playerTurn.textContent = `${player2} wins!`;
+                    playerTurn.style.color = player2Color;
+                    return (alert('Player 2 wins!'));
+                }
+                else if(drawCheck()){
+                    playerTurn.textContent = 'Game is a draw.';
+                }
+                else{
+                    playerTurn.textContent = `${player1}'s turn!`;
+                    return currentPlayer = 1;
+                }                
             }
-        }
-        else{ //full board
-
         }
     }
 }
@@ -66,25 +79,70 @@ function colorMatchCheck(one, two, three, four){
 
 function horizontalCheck(){
     for(let row=0; row < tableRow.length; row++){
-        for(let col=0; col < 4; col++){
+        for(let col=0; col < 4; col++){ //4 possible horizontal wins
             if(colorMatchCheck(tableRow[row].children[col].style.backgroundColor,
                 tableRow[row].children[col+1].style.backgroundColor, 
                 tableRow[row].children[col+2].style.backgroundColor,
                 tableRow[row].children[col+3].style.backgroundColor)){
-                    return true;
+                return true;
                 }
         }
     }
 }
 
 function verticalCheck(){
-
+    for(let col=0; col < 7; col++){
+        for(let row = 0; row < 3; row++){ //3 possible vertical wins
+            if(colorMatchCheck(tableRow[row].children[col].style.backgroundColor,
+                tableRow[row+1].children[col].style.backgroundColor,
+                tableRow[row+2].children[col].style.backgroundColor,
+                tableRow[row+3].children[col].style.backgroundColor)){
+                return true;
+            }
+        }
+    }
 }
 
 function diagonalCheck1(){
-
+    for(let col = 0; col < 4; col++){
+        for(let row = 0; row < 3; row++){
+            if(colorMatchCheck(tableRow[row].children[col].style.backgroundColor,
+                tableRow[row+1].children[col+1].style.backgroundColor,
+                tableRow[row+2].children[col+2].style.backgroundColor,
+                tableRow[row+3].children[col+3].style.backgroundColor))
+                return true;
+        }
+    }
 }
 
 function diagonalCheck2(){
-
+    for(let col = 0; col < 4; col++){
+        for(let row = 5; row > 2; row--){
+            if(colorMatchCheck(tableRow[row].children[col].style.backgroundColor,
+                tableRow[row-1].children[col+1].style.backgroundColor,
+                tableRow[row-2].children[col+2].style.backgroundColor,
+                tableRow[row-3].children[col+3].style.backgroundColor))
+                return true;
+        }
+    }
 }
+
+function drawCheck(){
+    let fullSlot = [];
+    for(let i=0; i<tableCell.length; i++){
+        if(tableCell[i].style.backgroundColor != 'white'){
+            fullSlot.push(tableCell[i]);
+        }
+    }
+    if(fullSlot.length == tableCell.length){
+        return true;
+    }
+}
+
+reset.addEventListener('click', ()=>{
+    tableSlot.forEach(slot =>{
+        slot.style.backgroundColor = 'white';
+    });
+    playerTurn.style.color = 'black';
+    return(currentPlayer == 1 ? playerTurn.textContent = `${player1}'s turn!`: playerTurn.textContent = `${player2}'s turn!`);
+})
